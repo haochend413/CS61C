@@ -28,6 +28,7 @@ main:
     # naive_pow: should return 2 ** 7 = 128
     li a0, 2
     li a1, 7
+    
     jal naive_pow
     li t0, 128
     bne a0, t0, failure
@@ -55,6 +56,7 @@ main:
 # FIXME Fix the reported error in this function (you can delete lines
 # if necessary, as long as the function still returns 1 in a0).
 simple_fn:
+    addi t0, x0, 1
     mv a0, t0
     li a0, 1
     ret
@@ -76,6 +78,9 @@ simple_fn:
 # missing. Another hint: what does the "s" in "s0" stand for?
 naive_pow:
     # BEGIN PROLOGUE
+    # push s0 into stack
+    addi sp, sp, -4
+    sw s0, 0(sp)
     # END PROLOGUE
     li s0, 1
 naive_pow_loop:
@@ -87,6 +92,8 @@ naive_pow_end:
     mv a0, s0
     # BEGIN EPILOGUE
     # END EPILOGUE
+    lw s0, 0(sp)
+    addi sp, sp, 4
     ret
 
 # Increments the elements of an array in-place.
@@ -100,8 +107,12 @@ inc_arr:
     #
     # FIXME What other registers need to be saved?
     #
-    addi sp, sp, -4
-    sw ra, 0(sp)
+    addi sp, sp, -16
+    sw ra, 12(sp)     # sp + 12 = old sp - 4
+    sw s0, 8(sp)      # sp + 8 = old sp - 8
+    sw s1, 4(sp)      # sp + 4 = old sp - 12
+    sw t0, 0(sp)      # sp + 0 = old sp - 16)
+    
     # END PROLOGUE
     mv s0, a0 # Copy start of array to saved register
     mv s1, a1 # Copy length of array to saved register
@@ -116,14 +127,24 @@ inc_arr_loop:
     # Hint: What does the "t" in "t0" stand for?
     # Also ask yourself this: why don't we need to preserve t1?
     #
+    addi sp, sp, -4
+    sw t0, 0(sp)
+
     jal helper_fn
+    
+     lw t0, 0(sp)
+     addi sp, sp, 4
+   
     # Finished call for helper_fn
     addi t0, t0, 1 # Increment counter
     j inc_arr_loop
 inc_arr_end:
     # BEGIN EPILOGUE
-    lw ra, 0(sp)
-    addi sp, sp, 4
+    lw ra, 12(sp)     # sp + 12 = old sp - 4
+    lw s0, 8(sp)      # sp + 8 = old sp - 8
+    lw s1, 4(sp)      # sp + 4 = old sp - 12
+    lw t0, 0(sp)      # sp + 0 = old sp - 16)
+    addi sp, sp, 16
     # END EPILOGUE
     ret
 
@@ -137,11 +158,14 @@ inc_arr_end:
 # as appropriate.
 helper_fn:
     # BEGIN PROLOGUE
+
     # END PROLOGUE
     lw t1, 0(a0)
-    addi s0, t1, 1
-    sw s0, 0(a0)
+    addi t0, t1, 1
+    sw t0, 0(a0)
     # BEGIN EPILOGUE
+    
+    
     # END EPILOGUE
     ret
 
@@ -155,7 +179,7 @@ check_arr:
     la t1, array
     addi t2, t1, 20 # Last element is 5*4 bytes off
 check_arr_loop:
-    beq t1, t2, check_arr_end
+    beq t1, t2, check_arr_end 
     lw t3, 0(t0)
     lw t4, 0(t1)
     bne t3, t4, failure
