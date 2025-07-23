@@ -1,7 +1,0 @@
-1.clean
-2.all
-3.gcc
-4.c99
-5.$(FOO)
-6.Open source unix-like operating systems.
-7.31
