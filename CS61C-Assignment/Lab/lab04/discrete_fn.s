@@ -76,7 +76,17 @@ main:
 # a1 is the address of the "output" array (defined above).
 # Think: why might having a1 be useful?
 f:
-    # YOUR CODE GOES HERE!
+    # we already have a1, now we can add number to input, and use that as the offset of accessing a1; 
+    # add the value with -3 to get offset
+    addi a0, a0, 3
+    # use this as offset to access a1
+    addi a3, x0, 4
+    mul a0, a0, a3
+    # store output in a0
+    add a0, a0, a1
+    lw a0, 0(a0)
+    
+    # YOUR CODE GOES HERE   !
 
     jr ra               # Always remember to jr ra after your function!
 
