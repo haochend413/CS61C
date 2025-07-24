@@ -11,7 +11,7 @@
 #	a3 (int*)  is the pointer to the start of m1
 # 	a4 (int)   is the # of rows (height) of m1
 #	a5 (int)   is the # of columns (width) of m1
-#	a6 (int*)  is the pointer to the the start of d
+#	a6 (int*)  is the pointer to the the start of d 
 # Returns:
 #	None (void), sets d = matmul(m0, m1)
 # Exceptions:
@@ -26,9 +26,16 @@
 matmul:
 
     # Error checks
+    blez a1, err1
+    blez a2, err1
+    blez a4, err2
+    blez a5, err2
+    bne a2, a4, err3
+
 
 
     # Prologue
+    
 
 
 outer_loop_start:
@@ -61,3 +68,23 @@ outer_loop_end:
     
     
     ret
+
+
+
+err1: 
+    li a0, 72
+    j done
+
+err2: 
+    li a0, 73
+    j done
+
+err3: 
+    li a0, 74
+    j done
+    
+done: 
+    li a7, 93
+    ecall
+
+    

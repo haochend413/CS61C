@@ -1,6 +1,7 @@
 .globl abs
 
 .text
+#test
 # =================================================================
 # FUNCTION: Given an int return its absolute value.
 # Arguments:
@@ -10,10 +11,11 @@
 # =================================================================
 abs:
     # Prologue
-
+    
     # return 0
-    mv a0, zero
+    bge a0, zero, done
+    sub a0, zero, a0
 
     # Epilogue
-
+done:
     ret
